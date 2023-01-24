@@ -7,7 +7,6 @@ import glob
 filename = "data/new_AMZN_electronics.npz"
 
 data = np.load(filename)
-
 loader = dict(data)
 print(loader)
 
@@ -19,13 +18,43 @@ class_names = loader.get("class_names")
 metadata = loader.get("metadata")
 
 
+print(f"Number of items {feature_matrix.shape[0]}")
+print(f"Number of items = {adj_matrix.shape[0]} connected to {adj_matrix.shape[1]} items")
+print(f"Number of items ={feature_matrix.shape[0]}, Number of Labels = {labels.shape[0]}")
 
+feature_matrix[0, :]
+
+
+
+# convert to sparse matrix
+from torch_sparse import SparseTensor
+
+edge_index = adj_matrix.nonzero(as_tuple=False).t()
+edge_weight = adj_matrix[edge_index[0], edge_index[1]]
+num_nodes = len(labels)
+
+adj = SparseTensor(row=edge_index[0], col=edge_index[1], sparse_sizes=(num_nodes, num_nodes))
+
+print(edge_index[1])
+
+
+# construct data object
+from torch_geometric.data import Data
+data = Data(x=feature_matrix, y=labels, adj_t=adj)
+data 
+
+
+# split for node prediction
+from torch_geometric.transforms import RandomNodeSplit, RandomLinkSplit
+
+transform = RandomLinkSplit()
+transform(data)
 
 
 def train(model, criterion, optimizer):
     model.train()
     optimizer.zero_grad()
-    z = model.encode(data.)
+    z = model.encode(data)
     
     out = model.decode(z, edge_label_index).view(-1)
     loss = criterion(out, edge_label) + model.kl_loss()
