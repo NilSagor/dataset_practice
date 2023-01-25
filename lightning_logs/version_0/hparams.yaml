@@ -1,0 +1,5 @@
+model_hparams: 10
+model_name: HousingModel
+optimizer_hparams:
+  lr: 0.001
+optimizer_name: Adam
