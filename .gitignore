@@ -2,6 +2,8 @@
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 datasets/*
+lightning_logs/*
+
 # IPython
 profile_default/
 ipython_config.py
